@@ -1,0 +1,132 @@
+RISC-V Simulator - Execution Log
+------------------------------------------------------------
+
+Instruction 1:
+  PC: 0x0000000000030098
+  Instruction: ADD x29, x30, x31
+  Raw: 0x01FF0EB3
+  Register updates:
+    x29=0x00000000000010AA
+  No memory updates
+
+Instruction 2:
+  PC: 0x000000000003009C
+  Instruction: SW x29, -4(x3)
+  Raw: 0xFFD1AE23
+  No register updates
+  Memory updates:
+    MEM[0x0000002E00400014] = 0x000010AA (32-bit)
+
+Instruction 3:
+  PC: 0x00000000000300A0
+  Instruction: ADD x0, x12, x14
+  No register updates
+  No memory updates
+
+Instruction 4:
+  PC: 0x00000000000300A4
+  Instruction: SLL x12, x12, x5
+  Register updates:
+    x12=0x99F8005000000000
+  No memory updates
+
+Instruction 5:
+  PC: 0x00000000000300A8
+  Instruction: BGE x12, x15, GE
+  No register updates
+  No memory updates
+
+Instruction 6:
+  PC: 0x00000000000300AC
+  Instruction: JALR x1, 0(x3)
+  Register updates:
+    x1=0x00000000000300B0
+  No memory updates
+
+Instruction 7:
+  PC: 0x0000002E00400018
+  Instruction: LB x12, -7(x3)
+  Raw: 0xFF918603
+  Register updates:
+    x12=0xFFFFFFFFFFFFFFCC
+  No memory updates
+
+Instruction 8:
+  PC: 0x0000002E0040001C
+  Instruction: AND x12, x12, x13
+  Raw: 0x00D67633
+  Register updates:
+    x12=0x00000000000000C0
+  No memory updates
+
+Instruction 9:
+  PC: 0x0000002E00400020
+  Instruction: SB x12, 30(x3)
+  Raw: 0x00C18F23
+  No register updates
+  Memory updates:
+    MEM[0x0000002E00400034] = 0x00C08067 (8-bit)
+
+Instruction 10:
+  PC: 0x0000002E00400024
+  Instruction: LW x12, 24(x3)
+  Raw: 0x0181A603
+  Register updates:
+    x12=0x00000000404205B3
+  No memory updates
+
+Instruction 11:
+  PC: 0x0000002E00400028
+  Instruction: XOR x12, x14, x12
+  Raw: 0x00C74633
+  Register updates:
+    x12=0x00000000005287B3
+  No memory updates
+
+Instruction 12:
+  PC: 0x0000002E0040002C
+  Instruction: SW x12, 24(x3)
+  Raw: 0x00C1AC23
+  No register updates
+  Memory updates:
+    MEM[0x0000002E00400030] = 0x005287B3 (32-bit)
+
+Instruction 13:
+  PC: 0x0000002E00400030
+  Instruction: ADD x15, x5, x5
+  Raw: 0x005287B3
+  Register updates:
+    x15=0x000000000000003E
+  No memory updates
+
+Instruction 14:
+  PC: 0x0000002E00400034
+  Instruction: JALR x0, 12(x1)
+  Raw: 0x00C08067
+  No register updates
+  No memory updates
+  Detected jump back to PC=0x00000000000300BC
+
+Instruction 15:
+  PC: 0x00000000000300BC
+  Instruction: SRA x18, x18, x5
+  Register updates:
+    x18=0xFFFFFFFF7510EEA2
+  No memory updates
+
+Instruction 16:
+  PC: 0x00000000000300C0
+  Instruction: LB x19, -6(x3)
+  Register updates:
+    x19=0xFFFFFFFFFFFFFF83
+  No memory updates
+
+Instruction 17:
+  PC: 0x00000000000300C4
+  Instruction: SD x19, -8(x3)
+  Raw: 0xFF31BC23
+  No register updates
+  Memory updates:
+    MEM[0x0000002E00400010] = 0xFFFFFFFFFFFFFF83 (64-bit)
+
+Simulation complete: reached endpoint at 0x00000000000300C8.

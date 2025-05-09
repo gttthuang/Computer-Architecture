@@ -1,0 +1,382 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc} % For UTF-8 encoding
+\usepackage{amsmath, amssymb, amsthm} % For mathematical formatting
+\usepackage{multirow} % For multirow in tables
+\usepackage[a4paper, margin=0.75in]{geometry} % For setting page size and margins
+\usepackage{xcolor, listings} % For code highlighting
+\usepackage{longtable} % For long tables
+\usepackage{graphicx} % For including images
+\setlength{\parindent}{0pt}
+
+
+\title{Computer Architecture HW 4}
+\author{111062117, Hsiang-Sheng Huang}
+
+\begin{document}
+
+\maketitle
+
+\section*{1}
+
+\subsection*{a}
+
+sd, ld, beq.
+
+\subsection*{b}
+
+add, and, beq.
+
+\subsection*{c}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+    \textbf{Must-be-0 signals} & \textbf{Consequences if set to 1}  \\
+    \hline
+    Branch & PC may jump to unwanted code segment. \\
+    \hline
+    MemWrite & Unneccessary memory read gives pereformance overhead. \\
+    \hline
+    \end{tabular}
+\end{table}
+
+\section*{2}
+
+\subsection*{a}
+
+After decoding, $015A07B3_\text{hex}=0000\ 0001\ 0101\ 1010\ 0000\ 0111\ 1011\ 0011_{2}$.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \textbf{funct7} & \textbf{rs2} & \textbf{rs1} & \textbf{funct3} & \textbf{rd} & \textbf{opcode} \\
+    \hline
+    0000000 & 10101 & 10100 & 000 & 01111 & 0110011 \\
+    \hline
+    -       & x21   & x20   & -   & x15   & -       \\
+    \hline
+    \end{tabular}
+\end{table}
+
+So the instruction is: ADD x15, x20, x21.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    Branch & MemRead & MemtoReg & ALUOp & MemWrite & ALUSrc & RegWrite \\
+    \hline
+    0      & 0       & 0        & 10    & 0        & 0      & 1        \\
+    \hline
+    \end{tabular}
+\end{table}
+
+\subsection*{b}
+
+The input values of the ALU are \textbf{Reg[20]} and \textbf{Reg[21]}.
+
+\section*{3}
+
+\subsection*{a}
+
+\begin{itemize}
+    \item \textbf{add:} 20 (PC Read) + 200 (I-Mem) + 120 (Register File) + 10 (Mux) + 150 (ALU) + 10 (Mux) + 10 (Register Setup) = 520 (ps)
+    \item \textbf{ld:} 20 (PC Read) + 200 (I-Mem) + 120 (Register File) + 150 (ALU) + 200 (D-Mem) + 10 (Mux) + 10 (Register Setup) = 710 (ps)
+    \item \textbf{sd:} 20 (PC Read) + 200 (I-Mem) + 120 (Register File) + 150 (ALU) + 200 (D-Mem) = 690 (ps)
+    \item \textbf{beq:} 20 (PC Read) + 200 (I-Mem) + 120 (Register File) + 10 (Mux) + 150 (ALU) + 5 (Single Gate) + 10 (PC Mux) + 10 (PC Setup) = 525 (ps)
+\end{itemize}
+
+Therefore, \textbf{add} has the least execution time at 520 ps.
+
+\subsection*{b}
+
+\textbf{710 ps}. This is because \textbf{ld} has the longest latency at 710 ps.
+
+\section*{4}
+
+\subsection*{a}
+
+\begin{itemize}
+    \item \textbf{Single-cycle:} 1 cycle per instruction. Therefore, $\mathrm{CPI}_\mathrm{single}=1$.
+    \item \textbf{Multi-cycle:} $\mathrm{CPI}_\mathrm{multi}=0.5 \times 4 + 0.2 \times 6 + 0.14 \times 5 + 0.12 \times 4 + 0.04 \times 3 = 4.5$
+\end{itemize}
+
+Let N be the number of instructions. The ratio between the total numbers of clock cycles for the multi-cycle processor and the single-cycle processor is:
+
+\begin{align*}
+\mathrm{Ratio} &= \frac{\mathrm{CPI}_\mathrm{multi} \cdot N}{\mathrm{CPI}_\mathrm{single} \cdot N} \\
+&= \frac{4.5 \cdot N}{1 \cdot N} \\
+&= 4.5
+\end{align*}
+
+\subsection*{b}
+
+\begin{itemize}
+    \item \textbf{Single-cycle:} Each cycle takes 60 ns. Therefore, the total time is $\mathrm{T}_\mathrm{single} = N \times 60 \text{ns} = 60 \text{ns} \times N$
+    \item \textbf{Multi-cycle:} Each instruction takes an average of 4.5 cycles and each cycle takes 12 ns. Therefore, the total time is $\mathrm{T}_\mathrm{multi} = 4.5 \times N \times 12 \text{ns} = 54 \text{ns} \times N$
+\end{itemize}
+
+The speedup is:
+
+\begin{align*}
+\mathrm{Speedup} &= \frac{\mathrm{T}_\mathrm{single}}{\mathrm{T}_\mathrm{multi}} \\
+&= \frac{60 \text{ns} \times N}{54 \text{ns} \times N} \\
+&= \frac{60}{54} \\
+&\approx 1.11
+\end{align*}
+
+\section*{5}
+
+\subsection*{a}
+
+\begin{itemize}
+    \item \texttt{ld x12, 8(x3)} generates value in \texttt{x12} that is used in \texttt{or x14, x12, x13}.
+    \item \texttt{addi x13, x4, 7} generates value in \texttt{x13} that is used in \texttt{or x14, x12, x13}.
+    \item \texttt{or x14, x12, x13} generates value in \texttt{x14} that is used in \texttt{sd x14, 0(x5)}.
+\end{itemize}
+
+\subsection*{b}
+
+The five-stage pipelined processor takes \textbf{8 clock cycles} to complete this instruction sequence.
+
+Cycle-by-cycle analysis:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline
+    Cycle            & 1  & 2  & 3  & 4   & 5   & 6   & 7   & 8   \\
+    \hline
+    ld x12, 8(x3)    & IF & ID & EX & MEM & WB  & -   & -   & -   \\
+    add x13, x4, 7   & -  & IF & ID & EX  & MEM & WB  & -   & -   \\
+    or x14, x12, x13 & -  & -  & IF & ID  & EX  & MEM & WB  & -   \\
+    sd x14, 0(x5)    & -  & -  & -  & IF  & ID  & EX  & MEM & WB  \\
+    \hline
+    \end{tabular}
+\end{table}
+
+No stalls are needed in this sequence because:
+\begin{itemize}
+    \item The \texttt{add} instruction between \texttt{ld} and \texttt{or} prevents a load-use hazard.
+    \item With data forwarding, x12, x13, and x14 can be used as soon as they are available.
+\end{itemize}
+
+\subsection*{c}
+No stall is needed. The only potential need for a stall would be between \texttt{ld} and \texttt{or}, but the \texttt{add} instruction (which is between them) prevents this hazard. The \texttt{ld} result is available in the \texttt{MEM} stage (at the end of cycle 4), and the \texttt{or} instruction can use it in the \texttt{EX} stage (at the beginning of cycle 5). Therefore, no stall is required.
+
+\subsection*{d}
+Without forwarding and hazard detection, we need to insert 2 NOPs after the \texttt{add} instruction and 2 NOPs after the \texttt{or} instruction to ensure correct execution:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small, numbers=left, numberstyle=\tiny\color{gray}, stepnumber=1, frame=single]
+ld x12, 8(x3)
+addi x13, x4, 7
+NOP
+NOP
+or x14, x12, x13
+NOP
+NOP
+sd x14, 0(x5)
+\end{lstlisting}
+
+This arrangement ensures that:
+
+1. \texttt{ld} writes to x12 in cycle 5, and \texttt{or} reads it in cycle 6 (safe)
+
+2. \texttt{addi} writes to x13 in cycle 6, and \texttt{or} reads it in cycle 7 (safe)
+
+3. \texttt{or} writes to x14 in cycle 9, and \texttt{sd} reads it in cycle 9 (safe)
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    Cycle & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+    \hline
+    ld x12, 8(x3)    & IF & ID & EX & MEM & WB & - & - & - & - & - & - & - \\
+    add x13, x4, 7   & - & IF & ID & EX & MEM & WB & - & - & - & - & - & - \\
+    NOP              & - & - & - & - & - & - & - & - & - & - & - & - \\
+    NOP              & - & - & - & - & - & - & - & - & - & - & - & - \\
+    or x14, x12, x13 & - & - & - & - & IF & ID & EX & MEM & WB & - & - & - \\
+    NOP              & - & - & - & - & - & - & - & - & - & - & - & - \\
+    NOP              & - & - & - & - & - & - & - & - & - & - & - & - \\
+    sd x14, 0(x5)    & - & - & - & - & - & - & - & IF & ID & EX & MEM & WB \\
+    \hline
+    \end{tabular}
+\end{table}
+
+Therefore, a minimum of 4 NOPs are needed to resolve all data hazards.
+
+\subsection*{e}
+The processor takes \textbf{12 clock cycles} to complete the sequence in (d). As shown in the cycle-by-cycle analysis table in (d), the first instruction begins execution in cycle 1, and the last instruction (sd) completes its WB stage in cycle 12.
+
+\section*{6}
+
+\subsection*{a}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    Cycle             & 1  & 2  & 3  & 4   & 5   & 6    & 7   & 8   & 9   \\
+    \hline
+    add x3, x1, x2    & IF & ID & EX & MEM & WB  & -    & -   & -   & -   \\
+    sub x4, x1, x2    & -  & IF & ID & EX  & MEM & WB   & -   & -   & -   \\
+    ld x5, 4(x3)      & -  & -  & IF & ID  & EX  & MEM  & WB  & -   & -   \\
+    STALL             & -  & -  & -  & IF  & ID  & -    & -   & -   & -   \\
+    sub x1, x4, x5    & -  & -  & -  & -   & -   & (ID) & EX  & MEM & WB  \\
+    \hline
+    \end{tabular}
+\end{table}
+
+We need 1 stall cycle due to the load-use hazard (\texttt{ld} generates x5 which is needed by the following \texttt{sub} instruction).
+
+The total number of cycles is 9 for 4 instructions. Therefore, the average CPI is:
+
+\begin{align*}
+\text{Average CPI} &= \frac{\text{Total cycles}}{\text{Number of instructions}} \\
+&= \frac{9}{4} \\
+&= 2.25
+\end{align*}
+
+\subsection*{b}
+Yes, it is possible to reorder the code to reduce the CPI. We can reorder as follows:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small, numbers=left, numberstyle=\tiny\color{gray}, stepnumber=1, frame=single]
+add x3, x1, x2
+ld x5, 4(x3)
+sub x4, x1, x2
+sub x1, x4, x5
+\end{lstlisting}
+
+With this ordering, the pipeline execution becomes:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline
+    Cycle             & 1  & 2  & 3  & 4   & 5   & 6   & 7   & 8   \\
+    \hline
+    add x3, x1, x2    & IF & ID & EX & MEM & WB  & -   & -   & -   \\
+    ld x5, 4(x3)      & -  & IF & ID & EX  & MEM & WB  & -   & -   \\
+    sub x4, x1, x2    & -  & -  & IF & ID  & EX  & MEM & WB  & -   \\
+    sub x1, x4, x5    & -  & -  & -  & IF  & ID  & EX  & MEM & WB  \\
+    \hline
+    \end{tabular}
+\end{table}
+
+By reordering, we avoid the load-use hazard.
+
+The total number of cycles is 8 for 4 instructions. Therefore, the average CPI is:
+
+\begin{align*}
+\text{Average CPI} &= \frac{\text{Total cycles}}{\text{Number of instructions}} \\
+&= \frac{8}{4} \\
+&= 2.0
+\end{align*}
+
+\section*{7}
+
+\subsection*{a}
+
+Always taken: $\frac{3}{8} = 37.5\%$.
+
+Always not taken: $\frac{5}{8} = 62.5\%$.
+
+\subsection*{b}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Ground truth} & T  & NT & T  & NT & T  & NT & NT & NT \\
+    \hline
+    \textbf{State}        & T  & T  & NT & T  & NT & T  & NT & NT \\
+    \hline
+    \textbf{Decision}     & T  & T  & NT & T  & NT & T  & NT & NT \\
+    \hline
+    \textbf{Correctness}  & \checkmark & $\times$ & $\times$ & $\times$ & $\times$ & $\times$ & \checkmark & \checkmark \\
+    \hline
+    \end{tabular}
+\end{table}
+
+Out of 8 predictions, 3 were correct.  
+\begin{align*}
+\text{Accuracy rate} = \frac{3}{8} = 37.5\%
+\end{align*}
+
+\subsection*{c}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{State} & ST & WT & WNT & SNT \\
+    \hline
+    \textbf{Description} & Strongly Taken & Weakly Taken & Weakly Not Taken & Strongly Not Taken \\
+    \hline
+    \end{tabular}
+\end{table}
+
+\clearpage
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Ground truth} & T  & NT & T  & NT & T  & NT & NT & NT \\
+    \hline
+    \textbf{State}        & ST & ST & WT & ST & WT & ST & WT & WNT \\
+    \hline
+    \textbf{Decision}     & T  & T  & T  & T  & T  & T  & T  & NT \\
+    \hline
+    \textbf{Correctness}  & \checkmark & $\times$ & \checkmark & $\times$ & \checkmark & $\times$ & $\times$ & \checkmark \\
+    \hline
+    \end{tabular}
+\end{table}
+
+Out of 8 predictions, 4 were correct.  
+\begin{align*}
+\text{Accuracy rate} = \frac{4}{8} = 50\%
+\end{align*}
+
+\section*{8}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|p{1cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+    \hline
+                   & \textbf{IF}                     & \textbf{ID}                     & \textbf{EX}                     & \textbf{MEM}                  & \textbf{WB}                  \\ \hline
+    1              & \texttt{add x12, x6, x5}        & -                               & -                               & -                            & -                            \\ \hline
+    2              & \texttt{sub x10, x11, x12}      & \texttt{add x12, x6, x5}        & -                               & -                            & -                            \\ \hline
+    3              & \texttt{beq x11, x12, LABEL}    & \texttt{sub x10, x11, x12}      & \texttt{add x12, x6, x5}        & -                            & -                            \\ \hline
+    4              & \texttt{sd x11, 0(x12)}         & \texttt{beq x11, x12, LABEL}    & \texttt{sub x10, x11, x12}      & \texttt{add x12, x6, x5}     & -                            \\ \hline
+    5              & \textcolor{red}{\texttt{First instruction of \textbf{exception handler}}} & \texttt{NOP}                    & \texttt{NOP}                    & \texttt{sub x10, x11, x12}   & \texttt{add x12, x6, x5}     \\ \hline
+    \end{tabular}
+\end{table}
+
+\section*{9}
+
+Yes, it can be scheduled in four cycles. The valid static schedule is:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Cycle} & \textbf{ALU}                    & \textbf{LS-slot}                  \\ \hline
+    1              & \texttt{add x12, x6, x5}            & \texttt{ld x30, 0(x13)}           \\ \hline
+    2              & \texttt{sub x10, x11, x12}          & \texttt{ld x31, 0(x12)}           \\ \hline
+    3              & \texttt{add x30, x10, x30}          & \texttt{sd x11, 0(x10)}           \\ \hline
+    4              & \texttt{sub x5, x11, x31}           & \texttt{sd x30, 0(x10)}           \\ \hline
+    \end{tabular}
+\end{table}
+
+\textbf{Justification:}
+\begin{itemize}
+  \item All RAW dependencies are respected via full forwarding.
+  \item The load-use latency for \texttt{ld x30, \dots} is met because its consumer (\texttt{add x30, \dots}) is scheduled in cycle 3, one cycle after the load's MEM stage.
+  \item The load-use latency for \texttt{ld x31, \dots} is met because its consumer (\texttt{sub x5, \dots}) is scheduled in cycle 4, one cycle after the load's MEM stage.
+\end{itemize}
+
+\end{document}
